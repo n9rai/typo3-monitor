@@ -22,5 +22,9 @@ trap 'rm -rf "$TMP"' EXIT
 ( cd "$ROOT" && tar --exclude-vcs --exclude='./Build' --exclude='./.github' --exclude='./.gitattributes' \
     --exclude='./.gitignore' --exclude='./CHANGELOG.md' --exclude='.DS_Store' --exclude='._*' -cf - . ) | tar -C "$TMP" -xf -
 rm -f "$ZIP"
-( cd "$TMP" && zip -r -X -q "$ZIP" . )
+# Ohne Verzeichniseintraege und mit ext_emconf.php zuerst: tailor (TER) haelt
+# einen Ordner als ersten Eintrag fuer einen Wrapper-Ordner (GitHub-ZIP-Stil)
+# und sucht ext_emconf.php dann dort.
+( cd "$TMP" && zip -X -D -q "$ZIP" ext_emconf.php composer.json \
+    && zip -r -X -D -q "$ZIP" . -x ext_emconf.php composer.json )
 echo "Erstellt: $ZIP ($(unzip -l "$ZIP" | tail -1 | awk '{print $2}') Dateien)"
