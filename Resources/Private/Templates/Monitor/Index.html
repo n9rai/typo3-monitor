@@ -1,0 +1,174 @@
+<html
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    data-namespace-typo3-fluid="true"
+>
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+    <h1>N9C Inside Monitor</h1>
+    <p class="text-body-secondary">
+        Meldet sicherheitsrelevante Kennzahlen dieser Installation an den N9C Monitoring-Dienst &ndash;
+        nur Zahlen und Flags, keine Namen, E-Mails oder Inhalte.
+        <a href="{uris.preview}">Genau ansehen, was gesendet wird &rarr;</a>
+    </p>
+
+    <f:if condition="{connected}">
+        <f:then>
+            <h2>Letzte Auswertung</h2>
+            <f:if condition="{last}">
+                <f:then>
+                    <f:if condition="{lastOk}">
+                        <f:then>
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <div class="card"><div class="card-body text-center">
+                                        <div class="fs-1 fw-bold">{last.score}</div>
+                                        <div>Score ({last.score_status})</div>
+                                    </div></div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="card"><div class="card-body text-center">
+                                        <div class="fs-1 fw-bold text-danger">{last.counts.critical}</div>
+                                        <div>kritisch</div>
+                                    </div></div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="card"><div class="card-body text-center">
+                                        <div class="fs-1 fw-bold text-warning">{last.counts.medium}</div>
+                                        <div>mittel</div>
+                                    </div></div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="card"><div class="card-body text-center">
+                                        <div class="fs-1 fw-bold text-success">{last.counts.ok}</div>
+                                        <div>bestanden</div>
+                                    </div></div>
+                                </div>
+                            </div>
+                        </f:then>
+                        <f:else>
+                            <div class="alert alert-danger">
+                                Der letzte Report wurde nicht angenommen (HTTP {last.status}): {last.detail}
+                            </div>
+                        </f:else>
+                    </f:if>
+                    <p>
+                        Stand: <f:format.date format="d.m.Y H:i">{last.time}</f:format.date>
+                        (ausgelöst: {last.trigger})
+                        <f:if condition="{last.delta}">
+                            &middot; seit dem vorherigen Report: {last.delta.new} neu, {last.delta.resolved} behoben
+                        </f:if>
+                    </p>
+
+                    <f:if condition="{hasFindingsInfo}">
+                        <f:then>
+                            <f:if condition="{findings}">
+                                <f:then>
+                                    <h2>Offene Befunde</h2>
+                                    <table class="table table-striped table-hover">
+                                        <thead><tr><th>Schwere</th><th>Befund</th><th>Empfehlung</th></tr></thead>
+                                        <tbody>
+                                            <f:for each="{findings}" as="finding">
+                                                <tr>
+                                                    <td>
+                                                        <f:if condition="{finding.severity} == 'critical'">
+                                                            <f:then><span class="badge badge-danger bg-danger">kritisch</span></f:then>
+                                                            <f:else><span class="badge badge-warning bg-warning text-dark">mittel</span></f:else>
+                                                        </f:if>
+                                                    </td>
+                                                    <td>
+                                                        <strong>{finding.problem}</strong>
+                                                        <f:if condition="{finding.risk}"><br><span class="text-body-secondary">{finding.risk}</span></f:if>
+                                                    </td>
+                                                    <td>{finding.recommendation}</td>
+                                                </tr>
+                                            </f:for>
+                                        </tbody>
+                                    </table>
+                                </f:then>
+                                <f:else>
+                                    <div class="alert alert-success">Keine offenen Befunde.</div>
+                                </f:else>
+                            </f:if>
+                        </f:then>
+                        <f:else>
+                            <p class="text-body-secondary">Einzelbefunde werden ab dem nächsten Report angezeigt.</p>
+                        </f:else>
+                    </f:if>
+                </f:then>
+                <f:else>
+                    <div class="alert alert-info">Noch kein Report gesendet.</div>
+                </f:else>
+            </f:if>
+
+            <form method="post" action="{uris.post}" class="mb-4">
+                <input type="hidden" name="action" value="send">
+                <button type="submit" class="btn btn-primary">Jetzt Report senden</button>
+            </form>
+
+            <h2>Verbindung</h2>
+            <table class="table table-sm">
+                <tbody>
+                    <tr><th style="width:30%">Status</th><td><span class="badge badge-success bg-success">verbunden</span></td></tr>
+                    <tr><th>Instanz-ID</th><td><code>{instanceId}</code></td></tr>
+                    <tr><th>Dienst</th><td>{endpoint}</td></tr>
+                    <tr><th>Zugangsdaten</th><td>
+                        <f:if condition="{configFromEnv}"><f:then>aus Umgebungsvariablen</f:then><f:else><code>{configFile}</code></f:else></f:if>
+                    </td></tr>
+                    <tr><th>Automatischer Report</th><td>
+                        <f:if condition="{autoEnabled}">
+                            <f:then>an, alle {intervalHours} Stunden bei Seitenaufrufen</f:then>
+                            <f:else>aus (nur Scheduler/CLI)</f:else>
+                        </f:if>
+                    </td></tr>
+                    <tr><th>Nächster Report fällig</th><td>
+                        <f:if condition="{nextDue}">
+                            <f:then><f:format.date format="d.m.Y H:i">{nextDue}</f:format.date></f:then>
+                            <f:else>beim nächsten Seitenaufruf</f:else>
+                        </f:if>
+                    </td></tr>
+                    <tr><th>Extension</th><td>n9c_monitor {agentVersion}</td></tr>
+                </tbody>
+            </table>
+
+            <f:if condition="{configFromEnv}">
+                <f:else>
+                <details class="mb-4">
+                    <summary>Neu verbinden</summary>
+                    <p class="mt-2">Nur nötig, wenn N9C Sie darum bittet. Instanz und Verlauf bleiben erhalten.</p>
+                    <form method="post" action="{uris.post}" class="row g-2">
+                        <input type="hidden" name="action" value="connect">
+                        <input type="hidden" name="force" value="1">
+                        <div class="col-md-6">
+                            <input type="text" name="code" class="form-control" placeholder="n9c-enroll-..." autocomplete="off" required>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-default btn-secondary">Neu verbinden</button>
+                        </div>
+                    </form>
+                </details>
+                </f:else>
+            </f:if>
+        </f:then>
+
+        <f:else>
+            <h2>Noch nicht verbunden</h2>
+            <p>Geben Sie den Verbindungscode ein, den Sie von N9C erhalten haben. Er ist einmalig und 72 Stunden gültig.</p>
+            <form method="post" action="{uris.post}" class="row g-2 mb-4">
+                <input type="hidden" name="action" value="connect">
+                <div class="col-md-6">
+                    <input type="text" name="code" class="form-control" placeholder="n9c-enroll-..." autocomplete="off" required>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">Verbinden</button>
+                </div>
+            </form>
+            <p class="text-body-secondary">
+                Vorher ansehen, was übertragen wird: <a href="{uris.preview}">Datenvorschau</a>.
+            </p>
+        </f:else>
+    </f:if>
+</f:section>
+
+</html>

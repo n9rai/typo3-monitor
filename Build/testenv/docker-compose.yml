@@ -1,0 +1,64 @@
+# Testumgebung n9c_monitor: TYPO3 12/13/14 je im Composer- und klassischen Modus.
+# Nur auf 127.0.0.1 erreichbar. /ext = Wurzel dieses Repos (die Extension).
+name: n9c-t3test
+
+x-common: &common
+  restart: "no"
+  extra_hosts: ["host.docker.internal:host-gateway"]
+
+services:
+  t3v12-composer:
+    <<: *common
+    build: {context: ., args: {PHP_VERSION: "8.1"}}
+    image: n9c-t3test-php81
+    environment: {APACHE_DOCUMENT_ROOT: /var/www/t3/public, T3_MODE: composer, T3_MAJOR: "12", T3_PORT: "8121"}
+    ports: ["127.0.0.1:8121:80"]
+    volumes: ["../..:/ext:ro", "t3v12-composer:/var/www"]
+
+  t3v12-classic:
+    <<: *common
+    build: {context: ., args: {PHP_VERSION: "8.1"}}
+    image: n9c-t3test-php81
+    environment: {APACHE_DOCUMENT_ROOT: /var/www/t3, T3_MODE: classic, T3_MAJOR: "12", T3_PORT: "8122"}
+    ports: ["127.0.0.1:8122:80"]
+    volumes: ["../..:/ext:ro", "t3v12-classic:/var/www"]
+
+  t3v13-composer:
+    <<: *common
+    build: {context: ., args: {PHP_VERSION: "8.2"}}
+    image: n9c-t3test-php82
+    environment: {APACHE_DOCUMENT_ROOT: /var/www/t3/public, T3_MODE: composer, T3_MAJOR: "13", T3_PORT: "8131"}
+    ports: ["127.0.0.1:8131:80"]
+    volumes: ["../..:/ext:ro", "t3v13-composer:/var/www"]
+
+  t3v13-classic:
+    <<: *common
+    build: {context: ., args: {PHP_VERSION: "8.2"}}
+    image: n9c-t3test-php82
+    environment: {APACHE_DOCUMENT_ROOT: /var/www/t3, T3_MODE: classic, T3_MAJOR: "13", T3_PORT: "8132"}
+    ports: ["127.0.0.1:8132:80"]
+    volumes: ["../..:/ext:ro", "t3v13-classic:/var/www"]
+
+  t3v14-composer:
+    <<: *common
+    build: {context: ., args: {PHP_VERSION: "8.3"}}
+    image: n9c-t3test-php83
+    environment: {APACHE_DOCUMENT_ROOT: /var/www/t3/public, T3_MODE: composer, T3_MAJOR: "14", T3_PORT: "8141"}
+    ports: ["127.0.0.1:8141:80"]
+    volumes: ["../..:/ext:ro", "t3v14-composer:/var/www"]
+
+  t3v14-classic:
+    <<: *common
+    build: {context: ., args: {PHP_VERSION: "8.3"}}
+    image: n9c-t3test-php83
+    environment: {APACHE_DOCUMENT_ROOT: /var/www/t3, T3_MODE: classic, T3_MAJOR: "14", T3_PORT: "8142"}
+    ports: ["127.0.0.1:8142:80"]
+    volumes: ["../..:/ext:ro", "t3v14-classic:/var/www"]
+
+volumes:
+  t3v12-composer:
+  t3v12-classic:
+  t3v13-composer:
+  t3v13-classic:
+  t3v14-composer:
+  t3v14-classic:

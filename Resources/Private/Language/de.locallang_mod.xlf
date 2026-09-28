@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="de" datatype="plaintext" original="EXT:n9c_monitor/Resources/Private/Language/locallang_mod.xlf" product-name="n9c_monitor">
+        <header/>
+        <body>
+            <trans-unit id="title">
+                <source>N9C Inside Monitor</source>
+                <target>N9C Inside Monitor</target>
+            </trans-unit>
+            <trans-unit id="shortDescription">
+                <source>Security monitoring of this installation</source>
+                <target>Sicherheits-Monitoring dieser Installation</target>
+            </trans-unit>
+            <trans-unit id="description">
+                <source>Connection status, score and open findings of the N9C Inside Monitor, data preview and manual report.</source>
+                <target>Verbindungsstatus, Score und offene Befunde des N9C Inside Monitors, Datenvorschau und manueller Report.</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

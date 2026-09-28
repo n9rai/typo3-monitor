@@ -1,0 +1,39 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  N9c\Monitor\:
+    resource: '../Classes/*'
+
+  N9c\Monitor\Command\ConnectCommand:
+    tags:
+      - name: console.command
+        command: 'n9c:monitor:connect'
+        description: 'Verbindet diese TYPO3-Instanz per Einmal-Code mit dem N9C Inside Monitor'
+        schedulable: false
+
+  N9c\Monitor\Command\ReportCommand:
+    tags:
+      - name: console.command
+        command: 'n9c:monitor:report'
+        description: 'Sammelt die Kennzahlen und sendet den Report an N9C (--dry-run zeigt nur das JSON)'
+        schedulable: true
+
+  N9c\Monitor\Command\StatusCommand:
+    tags:
+      - name: console.command
+        command: 'n9c:monitor:status'
+        description: 'Zeigt Verbindung und Ergebnis des letzten Reports'
+        schedulable: false
+
+  # Die Middleware holt sich AutoReport zur Laufzeit aus dem Container
+  # (bewusst ohne Konstruktor-Injection, siehe AutoReportMiddleware) ->
+  # AutoReport muss oeffentlich abrufbar sein.
+  N9c\Monitor\Service\AutoReport:
+    public: true
+
+  # Backend-Modul: wird ueber die Modul-Route aus dem Container geholt
+  N9c\Monitor\Controller\MonitorModuleController:
+    public: true

@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    name: PHP ${{ matrix.php }} Syntax
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.1', '8.2', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: none
+      - name: Syntax aller PHP-Dateien
+        run: find . -path ./.git -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: ZIP bauen (prueft auch, dass composer.json und ext_emconf.php dieselbe Version haben)
+        if: matrix.php == '8.3'
+        run: Build/build-zip.sh
+
+  typo3:
+    name: ${{ matrix.variant }}
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        variant:
+          - t3v12-composer
+          - t3v12-classic
+          - t3v13-composer
+          - t3v13-classic
+          - t3v14-composer
+          - t3v14-classic
+    steps:
+      - uses: actions/checkout@v4
+      - name: TYPO3 installieren und Extension testen
+        run: Build/testenv/run-tests.sh ${{ matrix.variant }}
+      - name: Installations-Log bei Fehler
+        if: failure()
+        run: tail -80 /tmp/n9c-t3test-${{ matrix.variant }}.log || true

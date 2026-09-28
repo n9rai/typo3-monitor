@@ -1,0 +1,48 @@
+{
+    "name": "n9c/typo3-monitor",
+    "type": "typo3-cms-extension",
+    "description": "N9C Inside Monitor - meldet sicherheitsrelevante Kennzahlen dieser TYPO3-Instanz (nur Zahlen und Flags, keine personenbezogenen Daten) an den N9C Monitoring-Dienst.",
+    "keywords": [
+        "TYPO3",
+        "TYPO3 CMS",
+        "extension",
+        "security",
+        "monitoring",
+        "vulnerabilities"
+    ],
+    "license": "GPL-2.0-or-later",
+    "version": "0.3.2",
+    "homepage": "https://n9c.io",
+    "support": {
+        "issues": "https://github.com/n9rai/typo3-monitor/issues",
+        "source": "https://github.com/n9rai/typo3-monitor",
+        "docs": "https://github.com/n9rai/typo3-monitor#readme"
+    },
+    "authors": [
+        {
+            "name": "N9C",
+            "homepage": "https://n9c.io"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "typo3/cms-core": "^12.4 || ^13.4 || ^14.3",
+        "typo3/cms-backend": "^12.4 || ^13.4 || ^14.3"
+    },
+    "suggest": {
+        "typo3/cms-scheduler": "Regelmaessiger Report ueber den Task \"Execute console commands\""
+    },
+    "autoload": {
+        "psr-4": {
+            "N9c\\Monitor\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "n9c_monitor",
+            "Package": {
+                "providesPackages": {}
+            }
+        }
+    }
+}

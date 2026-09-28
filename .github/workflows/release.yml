@@ -1,0 +1,47 @@
+name: Release
+
+# Ein Tag v<version> (z. B. v0.3.2) erzeugt ein GitHub-Release mit der ZIP
+# und veroeffentlicht im TER, sobald das Secret TYPO3_API_TOKEN gesetzt ist
+# (extensions.typo3.org -> My Extensions -> Access Tokens).
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TYPO3_EXTENSION_KEY: n9c_monitor
+      TYPO3_API_TOKEN: ${{ secrets.TYPO3_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Tag passt zur Version in composer.json und ext_emconf.php
+        run: |
+          V="${GITHUB_REF_NAME#v}"
+          echo "VERSION=$V" >> "$GITHUB_ENV"
+          grep -q "\"version\": \"$V\"" composer.json || { echo "::error::composer.json hat nicht Version $V"; exit 1; }
+          grep -q "'version' => '$V'" ext_emconf.php || { echo "::error::ext_emconf.php hat nicht Version $V"; exit 1; }
+          grep -q "^## $V" CHANGELOG.md || { echo "::error::CHANGELOG.md hat keinen Abschnitt ## $V"; exit 1; }
+
+      - name: ZIP bauen
+        run: Build/build-zip.sh
+
+      - name: Release-Text aus dem CHANGELOG
+        run: awk -v v="## $VERSION" 'index($0, v)==1 {f=1; next} /^## / {f=0} f' CHANGELOG.md > release-notes.md
+
+      - name: GitHub-Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Build/dist/n9c_monitor_${{ env.VERSION }}.zip
+          body_path: release-notes.md
+
+      - name: Im TER veroeffentlichen
+        if: env.TYPO3_API_TOKEN != ''
+        run: |
+          composer global require typo3/tailor --no-progress --no-interaction
+          "$(composer global config bin-dir --absolute)/tailor" ter:publish \
+            --artefact="Build/dist/n9c_monitor_${VERSION}.zip" \
+            --comment="$(head -c 900 release-notes.md)" "$VERSION"

@@ -1,0 +1,4 @@
+# cat=basic/enable/10; type=boolean; label=Automatischer Report bei Seitenaufrufen: Sendet den Report im Hintergrund, sobald das Intervall abgelaufen ist - fuer Hosting ohne Cronjob. Laeuft zusaetzlich ein Scheduler-Task, stoert das nicht.
+autoReport = 1
+# cat=basic/enable/20; type=int+; label=Intervall in Stunden: Wie oft gemeldet wird (Standard 6)
+autoReportIntervalHours = 6
