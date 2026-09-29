@@ -11,7 +11,7 @@
         "vulnerabilities"
     ],
     "license": "GPL-2.0-or-later",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "homepage": "https://n9c.io",
     "support": {
         "issues": "https://github.com/n9rai/typo3-monitor/issues",

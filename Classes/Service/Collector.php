@@ -26,7 +26,7 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 final class Collector
 {
     public const AGENT_NAME = 'n9c_monitor';
-    public const AGENT_VERSION = '0.3.3';
+    public const AGENT_VERSION = '0.3.4';
     public const SCHEMA = 'n9c.agent.report/1';
 
     private const INACTIVE_DAYS = 90;
@@ -386,13 +386,38 @@ final class Collector
     private function collectSites(): array
     {
         $sites = [];
+        $hostlessPaths = [];
         // Ohne Cache: Wird config/sites/ direkt geaendert (FTP/Deployment statt
         // Sites-Modul), liefert der Cache sonst noch den alten Stand - und das
         // Backend wuerde laengst entfernte Domains weiter scannen.
         foreach ($this->siteFinder->getAllSites(false) as $site) {
-            $base = (string)$site->getBase();
-            if ($base !== '' && $base !== '/') {
-                $sites[] = mb_substr($base, 0, 255);
+            $bases = [(string)$site->getBase()];
+            // Basisvarianten (z. B. Produktiv-Domain bei base "/") ebenfalls melden;
+            // Entwicklungs-Domains (ddev, localhost) filtert das Backend aus
+            foreach ((array)($site->getConfiguration()['baseVariants'] ?? []) as $variant) {
+                if (is_array($variant) && is_string($variant['base'] ?? null)) {
+                    $bases[] = $variant['base'];
+                }
+            }
+            foreach ($bases as $base) {
+                $base = trim($base);
+                if ($base === '') {
+                    continue;
+                }
+                if (preg_match('#^(https?:)?//#i', $base)) {
+                    $sites[] = mb_substr($base, 0, 255);
+                } else {
+                    // Einstiegspunkt ohne Domain ("/", "/de/"): TYPO3 antwortet unter jeder Domain
+                    $hostlessPaths[] = '/' . ltrim($base, '/');
+                }
+            }
+        }
+        if ($hostlessPaths !== []) {
+            // Stattdessen die Domains melden, unter denen die Seite tatsaechlich aufgerufen wird
+            foreach ((new SeenHosts())->all() as $origin) {
+                foreach (array_unique($hostlessPaths) as $path) {
+                    $sites[] = mb_substr($origin . $path, 0, 255);
+                }
             }
         }
         return array_values(array_unique($sites));

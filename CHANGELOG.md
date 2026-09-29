@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.4 – 2026-09-30
+
+- Sites mit Einstiegspunkt ohne Domain (z. B. `/`): Die Extension meldet jetzt
+  die Domains, unter denen die Installation tatsächlich aufgerufen wird –
+  gemerkt beim fälligen automatischen Report und bei Aktionen im
+  Backend-Modul, höchstens fünf, nur Schema und Host
+  (`var/n9c_monitor/seen_hosts.json`). Damit funktionieren auch hier die
+  wöchentlichen Außenscans.
+- Basisvarianten der Sites (z. B. Produktiv-Domain unter „Variants for the
+  Entry Point“) werden mitgemeldet.
+
 ## 0.3.3 – 2026-09-30
 
 - Backend-Modul: Ohne Verbindung eine Anleitung in drei Schritten mit Link zur

@@ -8,7 +8,9 @@ use N9c\Monitor\Service\AutoReport;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use N9c\Monitor\Service\SeenHosts;
 use Psr\Http\Server\RequestHandlerInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -42,6 +44,7 @@ final class AutoReportMiddleware implements MiddlewareInterface
             $autoReport = $container->get(AutoReport::class);
             if ($autoReport->isDue()) {
                 self::$scheduled = true;
+                self::rememberHost($request);
                 register_shutdown_function(static function () use ($autoReport): void {
                     try {
                         $autoReport->runAfterResponse();
@@ -53,5 +56,21 @@ final class AutoReportMiddleware implements MiddlewareInterface
             // Monitoring darf eine Seite niemals kaputt machen
         }
         return $response;
+    }
+
+    /**
+     * Domain des aktuellen Aufrufs merken (fuer Sites mit Einstiegspunkt "/"),
+     * nur wenn ohnehin ein Report faellig ist.
+     */
+    private static function rememberHost(ServerRequestInterface $request): void
+    {
+        try {
+            $normalized = $request->getAttribute('normalizedParams');
+            $origin = $normalized instanceof NormalizedParams
+                ? $normalized->getRequestHost()
+                : $request->getUri()->getScheme() . '://' . $request->getUri()->getAuthority();
+            (new SeenHosts())->remember((string)$origin);
+        } catch (\Throwable) {
+        }
     }
 }

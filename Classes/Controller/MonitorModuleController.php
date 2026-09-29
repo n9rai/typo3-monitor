@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace N9c\Monitor\Controller;
 
+use N9c\Monitor\Service\SeenHosts;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use N9c\Monitor\Service\AutoReport;
 use N9c\Monitor\Service\Collector;
 use N9c\Monitor\Service\ConfigStore;
@@ -48,6 +50,16 @@ final class MonitorModuleController
         $body = $request->getParsedBody();
         $action = (string)(is_array($body) && isset($body['action']) ? $body['action'] : ($request->getQueryParams()['action'] ?? 'index'));
         $isPost = $request->getMethod() === 'POST';
+        if ($isPost) {
+            // Domain des Backends merken - fuer Sites mit Einstiegspunkt "/" (siehe SeenHosts)
+            try {
+                $normalized = $request->getAttribute('normalizedParams');
+                if ($normalized instanceof NormalizedParams) {
+                    (new SeenHosts())->remember($normalized->getRequestHost());
+                }
+            } catch (\Throwable) {
+            }
+        }
 
         $view = $this->moduleTemplateFactory->create($request);
         $view->setTitle('N9C Inside Monitor');

@@ -100,7 +100,9 @@ verträgt sich mit dem automatischen Report.
 - TYPO3-, PHP- und Datenbank-Version, Application Context
 - installierte Extensions mit Version (Extension-Key und Composer-Name, für den
   Abgleich mit Sicherheitsmeldungen)
-- Basis-URLs der Sites
+- Basis-URLs der Sites inkl. Basisvarianten; bei Einstiegspunkt ohne Domain
+  (z. B. `/`) die zuletzt gesehenen Domains der Installation (nur Schema und
+  Host, höchstens fünf, gespeichert in `var/n9c_monitor/seen_hosts.json`)
 - Konfigurationsprüfungen, jeweils nur als Zahl oder Ja/Nein:
   - Administratoren ohne Zwei-Faktor-Anmeldung, Anzahl Administratoren,
     Standard-Benutzername „admin“, inaktive Administrator-Konten
