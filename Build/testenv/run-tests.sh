@@ -47,7 +47,10 @@ for v in $VARIANTS; do
   [ -z "$lint" ] || { echo "$lint"; fail; continue; }
 
   step="Befehle registriert"
-  t3 list n9c 2>&1 | grep -q "n9c:monitor:report" || { t3 list n9c; fail; continue; }
+  # Ausgabe erst einsammeln: "cmd | grep -q" bricht mit pipefail sporadisch ab
+  # (grep beendet sich beim ersten Treffer, cmd bekommt SIGPIPE -> Exit 141)
+  out=$(t3 list n9c 2>&1)
+  grep -q "n9c:monitor:report" <<<"$out" || { echo "$out"; fail; continue; }
 
   step="Dry-Run"
   t3 n9c:monitor:report --dry-run > "/tmp/n9c-t3test-$v.json" 2>&1
@@ -75,7 +78,8 @@ PY
   IDS+=("$id")
 
   step="Report"
-  t3 n9c:monitor:report 2>&1 | tee "/tmp/n9c-t3test-$v.report" | grep -q "Report angenommen" \
+  t3 n9c:monitor:report > "/tmp/n9c-t3test-$v.report" 2>&1
+  grep -q "Report angenommen" "/tmp/n9c-t3test-$v.report" \
     || { cat "/tmp/n9c-t3test-$v.report"; fail; continue; }
   grep -o "Score.*" "/tmp/n9c-t3test-$v.report" | head -1 | sed 's/^/   /'
   fi
