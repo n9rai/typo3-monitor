@@ -13,8 +13,11 @@ Benachrichtigung bei neuen kritischen Befunden und ergänzender Außensicht.
 - **Funktioniert ohne Cronjob** – der Report wird bei normalen Seitenaufrufen im Hintergrund gesendet
 - Offen dokumentiertes Protokoll: [Documentation/Protocol.md](Documentation/Protocol.md)
 
-Für die Nutzung ist ein Konto beim N9C Inside Monitor nötig. Den Verbindungscode
-erhalten Sie von N9C bzw. im N9C-Dashboard.
+Für die Nutzung ist ein Konto im N9C-Dashboard nötig – **kostenlos registrieren:
+<https://dashboard.n9c.io/dashboard/register>**. 14 Tage voller Umfang, danach
+dauerhaft gratis für eine Installation (Score und offene Befunde); Verlauf,
+E-Mail-Alerts, wöchentliche Außenscans und weitere Installationen mit dem Abo.
+Den Verbindungscode erzeugen Sie im Dashboard unter *Verbindungscode*.
 
 ## Installation
 

@@ -85,6 +85,8 @@ final class ReportService
             'detail' => $detail === null ? null : mb_substr(is_string($detail) ? $detail : (string)json_encode($detail), 0, 500),
             // Offene Befunde in Klartext (Backend liefert sie ab API-Stand 24.09.2026 mit)
             'findings' => is_array($data['findings'] ?? null) ? array_slice($data['findings'], 0, 50) : null,
+            // Tarif des N9C-Kontos (Backend ab 29.09.2026): tier, label, until, full
+            'plan' => is_array($data['plan'] ?? null) ? array_intersect_key($data['plan'], array_flip(['tier', 'label', 'until', 'full'])) : null,
         ]);
     }
 }

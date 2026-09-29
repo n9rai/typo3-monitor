@@ -26,7 +26,7 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 final class Collector
 {
     public const AGENT_NAME = 'n9c_monitor';
-    public const AGENT_VERSION = '0.3.2';
+    public const AGENT_VERSION = '0.3.3';
     public const SCHEMA = 'n9c.agent.report/1';
 
     private const INACTIVE_DAYS = 90;

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.3 – 2026-09-30
+
+- Backend-Modul: Ohne Verbindung eine Anleitung in drei Schritten mit Link zur
+  kostenlosen Registrierung im N9C-Dashboard und zum Verbindungscode.
+- Verbunden: Link „Im N9C-Dashboard öffnen“ direkt zur Instanz, Anzeige des
+  Tarifs (Testphase, Gratis, Abo) und Hinweis, wenn die Installation ruht.
+- `n9c:monitor:status` zeigt den Dashboard-Link und den Tarif.
+- Dashboard-Adresse per `N9C_MONITOR_DASHBOARD` überschreibbar.
+
 ## 0.3.2 – 2026-09-28
 
 - Middleware für den automatischen Report sitzt jetzt weit außen im Stack und

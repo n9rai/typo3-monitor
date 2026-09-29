@@ -71,7 +71,18 @@ final class MonitorModuleController
         $lastSent = $this->stamp->lastSentAt();
         $interval = $this->autoReport->intervalSeconds();
 
+        $dashboard = $this->configStore->dashboardUrl();
         $view->assignMultiple([
+            'dashboard' => [
+                'base' => $dashboard,
+                'register' => $dashboard . '/dashboard/register',
+                'login' => $dashboard . '/dashboard/',
+                'newCode' => $dashboard . '/dashboard/tokens/new',
+                'billing' => $dashboard . '/dashboard/billing',
+                'instance' => !empty($config['instance_id']) ? $dashboard . '/dashboard/instances/' . rawurlencode((string)$config['instance_id']) : null,
+            ],
+            'plan' => is_array($last['plan'] ?? null) ? $last['plan'] : null,
+            'dormant' => is_array($last) && (int)($last['status'] ?? 0) === 402,
             'agentVersion' => Collector::AGENT_VERSION,
             'connected' => !empty($config['instance_id']) && !empty($config['secret']),
             'instanceId' => $config['instance_id'],

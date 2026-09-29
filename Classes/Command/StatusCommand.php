@@ -36,6 +36,7 @@ final class StatusCommand extends Command
         $lastSent = $this->stamp->lastSentAt();
         $interval = $this->autoReport->intervalSeconds();
 
+        $dashboard = $this->configStore->dashboardUrl();
         $rows = [
             ['Agent', Collector::AGENT_NAME . ' ' . Collector::AGENT_VERSION],
             ['Endpunkt', $config['endpoint']],
@@ -60,9 +61,15 @@ final class StatusCommand extends Command
             if (!empty($last['detail'])) {
                 $rows[] = ['Meldung', $last['detail']];
             }
+            if (is_array($last['plan'] ?? null)) {
+                $rows[] = ['Tarif', ($last['plan']['label'] ?? '-') . (!empty($last['plan']['until']) ? ' bis ' . date('d.m.Y', (int)strtotime((string)$last['plan']['until'])) : '')];
+            }
         } else {
             $rows[] = ['Letzter Report', '(noch keiner)'];
         }
+        $rows[] = ['Dashboard', empty($config['instance_id'])
+            ? $dashboard . '/dashboard/register (Konto erstellen, dann Verbindungscode erzeugen)'
+            : $dashboard . '/dashboard/instances/' . $config['instance_id']];
         $io->table(['', ''], $rows);
         return Command::SUCCESS;
     }

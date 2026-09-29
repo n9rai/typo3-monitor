@@ -12,6 +12,21 @@
         nur Zahlen und Flags, keine Namen, E-Mails oder Inhalte.
         <a href="{uris.preview}">Genau ansehen, was gesendet wird &rarr;</a>
     </p>
+    <f:if condition="{connected}">
+        <p>
+            <a href="{dashboard.instance}" target="_blank" rel="noopener" class="btn btn-default btn-secondary">Im N9C-Dashboard öffnen</a>
+            <f:if condition="{plan}">
+                <span class="ms-2">Tarif: <strong>{plan.label}</strong><f:if condition="{plan.until}"> bis <f:format.date format="d.m.Y">{plan.until}</f:format.date></f:if></span>
+                <f:if condition="{plan.full}"><f:else> &middot; <a href="{dashboard.billing}" target="_blank" rel="noopener">Verlauf, E-Mail-Alerts und Außenscans mit dem Abo</a></f:else></f:if>
+            </f:if>
+        </p>
+        <f:if condition="{dormant}">
+            <div class="alert alert-warning">
+                Diese Installation ruht, weil das Kontingent Ihres N9C-Kontos ausgeschöpft ist.
+                <a href="{dashboard.billing}" target="_blank" rel="noopener">Weitere Installationen im Dashboard buchen &rarr;</a>
+            </div>
+        </f:if>
+    </f:if>
 
     <f:if condition="{connected}">
         <f:then>
@@ -154,7 +169,18 @@
 
         <f:else>
             <h2>Noch nicht verbunden</h2>
-            <p>Geben Sie den Verbindungscode ein, den Sie von N9C erhalten haben. Er ist einmalig und 72 Stunden gültig.</p>
+            <div class="card mb-3"><div class="card-body">
+                <p class="mb-2"><strong>In drei Schritten zur Auswertung:</strong></p>
+                <ol class="mb-3">
+                    <li><a href="{dashboard.register}" target="_blank" rel="noopener">Kostenloses Konto im N9C-Dashboard erstellen</a>
+                        &ndash; 14 Tage voller Umfang, danach dauerhaft gratis für eine Installation.</li>
+                    <li>Im Dashboard unter <em>Verbindungscode</em> einen Code für diese Installation erzeugen.</li>
+                    <li>Den Code hier unten eingeben und <em>Verbinden</em> klicken &ndash; die erste Auswertung erscheint sofort.</li>
+                </ol>
+                <a href="{dashboard.register}" target="_blank" rel="noopener" class="btn btn-primary">Konto erstellen</a>
+                <a href="{dashboard.newCode}" target="_blank" rel="noopener" class="btn btn-default btn-secondary">Ich habe ein Konto &ndash; Code erzeugen</a>
+            </div></div>
+            <p>Verbindungscode eingeben (einmalig, 72 Stunden gültig):</p>
             <form method="post" action="{uris.post}" class="row g-2 mb-4">
                 <input type="hidden" name="action" value="connect">
                 <div class="col-md-6">

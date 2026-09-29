@@ -21,6 +21,17 @@ use TYPO3\CMS\Core\Core\Environment;
 final class ConfigStore
 {
     public const DEFAULT_ENDPOINT = 'https://api.n9c.io';
+    public const DEFAULT_DASHBOARD = 'https://dashboard.n9c.io';
+
+    /**
+     * Adresse des N9C-Dashboards (Konto, Verbindungscode, Auswertung).
+     * Ueberschreibbar mit N9C_MONITOR_DASHBOARD.
+     */
+    public function dashboardUrl(): string
+    {
+        $env = getenv('N9C_MONITOR_DASHBOARD') ?: '';
+        return rtrim($env !== '' ? $env : self::DEFAULT_DASHBOARD, '/');
+    }
 
     public function getFilePath(): string
     {

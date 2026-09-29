@@ -1,7 +1,7 @@
 {
     "name": "n9c/typo3-monitor",
     "type": "typo3-cms-extension",
-    "description": "N9C Inside Monitor - meldet sicherheitsrelevante Kennzahlen dieser TYPO3-Instanz (nur Zahlen und Flags, keine personenbezogenen Daten) an den N9C Monitoring-Dienst.",
+    "description": "N9C Inside Monitor - meldet sicherheitsrelevante Kennzahlen dieser TYPO3-Instanz (nur Zahlen und Flags, keine personenbezogenen Daten) an den N9C Monitoring-Dienst. Kostenloses Konto: https://dashboard.n9c.io/dashboard/register",
     "keywords": [
         "TYPO3",
         "TYPO3 CMS",
@@ -11,7 +11,7 @@
         "vulnerabilities"
     ],
     "license": "GPL-2.0-or-later",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "homepage": "https://n9c.io",
     "support": {
         "issues": "https://github.com/n9rai/typo3-monitor/issues",
